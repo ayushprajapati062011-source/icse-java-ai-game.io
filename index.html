@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ICSE Java Coding Arena</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#141e30,#243b55);
+color:white;
+text-align:center;
+transition:0.3s;
+}
+
+.light{
+background:white;
+color:black;
+}
+
+header{
+background:rgba(0,0,0,0.5);
+padding:10px;
+}
+
+button{
+padding:8px 15px;
+margin:5px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.easy{background:#27ae60;color:white;}
+.medium{background:#f39c12;color:white;}
+.hard{background:#e74c3c;color:white;}
+
+.card{
+background:white;
+color:black;
+width:85%;
+max-width:800px;
+margin:20px auto;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+
+textarea{
+width:95%;
+height:120px;
+}
+
+.progress{
+width:80%;
+height:20px;
+background:#555;
+margin:15px auto;
+border-radius:10px;
+}
+
+#progressBar{
+height:100%;
+width:0%;
+background:limegreen;
+border-radius:10px;
+}
+
+.login{
+margin-top:100px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login" id="loginBox">
+<h2>🎮 ICSE Java Coding Arena</h2>
+<input type="text" id="username" placeholder="Enter your name">
+<br><br>
+<button onclick="startGame()">Start Game</button>
+</div>
+
+<div id="game" style="display:none;">
+
+<header>
+<h3 id="welcome"></h3>
+⭐ Score: <span id="score">0</span> |
+🏆 XP: <span id="xp">0</span> |
+🎖 Rank: <span id="rank">Beginner</span> |
+⏳ Time: <span id="timer">30</span>
+<br>
+<button onclick="toggleMode()">🌗 Mode</button>
+<button onclick="resetGame()">Reset</button>
+</header>
+
+<div class="progress">
+<div id="progressBar"></div>
+</div>
+
+<div>
+<button class="easy" onclick="loadQuestion('easy')">Easy</button>
+<button class="medium" onclick="loadQuestion('medium')">Medium</button>
+<button class="hard" onclick="loadQuestion('hard')">Hard</button>
+</div>
+
+<div class="card">
+<h3 id="chapter"></h3>
+<p id="question"></p>
+<textarea id="answer"></textarea>
+<br>
+<button onclick="checkAnswer()">Submit</button>
+<button onclick="showHint()">Hint</button>
+<p id="result"></p>
+</div>
+
+</div>
+
+<script>
+
+let score=0;
+let xp=0;
+let totalSolved=0;
+let currentAnswer="";
+let timer;
+let timeLeft=30;
+
+const questions={
+easy:[
+{c:"Basics",q:"Print Hello World",a:'System.out.println("Hello World");',h:"Use System.out.println();"},
+{c:"Variables",q:"Declare int x=10;",a:"int x=10;",h:"Use int keyword"}
+],
+medium:[
+{c:"Loops",q:"Write for loop 1 to 5",a:"for(int i=1;i<=5;i++){System.out.println(i);}",h:"for(int i=1;..."}
+],
+hard:[
+{c:"Conditions",q:"Write if(x>5)",a:"if(x>5){System.out.println(x);}",h:"Use if(condition)"}
+]
+};
+
+function startGame(){
+let name=document.getElementById("username").value;
+if(name===""){alert("Enter name");return;}
+document.getElementById("loginBox").style.display="none";
+document.getElementById("game").style.display="block";
+document.getElementById("welcome").innerText="Welcome "+name+" 🚀";
+}
+
+function loadQuestion(level){
+let arr=questions[level];
+let random=Math.floor(Math.random()*arr.length);
+let obj=arr[random];
+
+document.getElementById("chapter").innerText="📘 "+obj.c;
+document.getElementById("question").innerText=obj.q;
+document.getElementById("answer").value="";
+document.getElementById("result").innerText="";
+currentAnswer=obj.a;
+
+startTimer();
+}
+
+function checkAnswer(){
+let user=document.getElementById("answer").value.replace(/\s/g,'');
+let correct=currentAnswer.replace(/\s/g,'');
+
+if(user===correct){
+score+=10;
+xp+=5;
+totalSolved++;
+update();
+document.getElementById("result").innerText="✅ Correct!";
+}else{
+document.getElementById("result").innerText="❌ Try Again!";
+}
+}
+
+function showHint(){
+alert("💡 Hint: Think about correct Java syntax.");
+}
+
+function update(){
+document.getElementById("score").innerText=score;
+document.getElementById("xp").innerText=xp;
+
+let percent=(totalSolved/10)*100;
+document.getElementById("progressBar").style.width=percent+"%";
+
+let rank;
+if(xp<20) rank="Beginner";
+else if(xp<50) rank="Intermediate";
+else rank="Master";
+
+document.getElementById("rank").innerText=rank;
+}
+
+function startTimer(){
+timeLeft=30;
+document.getElementById("timer").innerText=timeLeft;
+clearInterval(timer);
+timer=setInterval(()=>{
+timeLeft--;
+document.getElementById("timer").innerText=timeLeft;
+if(timeLeft<=0){
+clearInterval(timer);
+document.getElementById("result").innerText="⏰ Time Up!";
+}
+},1000);
+}
+
+function toggleMode(){
+document.body.classList.toggle("light");
+}
+
+function resetGame(){
+location.reload();
+}
+
+</script>
+
+</body>
+</html>
